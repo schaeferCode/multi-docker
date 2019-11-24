@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t schaeferCode/react-test -f ./client/Dockerfile.dev ./client
+
+script: 
+  - docker run -e CI=true schaeferCode/react-test npm test
+
+after_success:
+  - docker build -t schaeferCode/multi-client ./client
+  - docker build -t schaeferCode/multi-nginx ./nginx
+  - docker build -t schaeferCode/multi-server ./server
+  - docker build -t schaeferCode/multi-worker ./worker
+  # Log in to docker cli
+  - echo "$DOCKER_PASS" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take images and push to docker hub
+  - docker push schaeferCode/multi-client
+  - docker push schaeferCode/multi-nginx
+  - docker push schaeferCode/multi-server
+  - docker push schaeferCode/multi-worker
