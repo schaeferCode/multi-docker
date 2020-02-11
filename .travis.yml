@@ -9,14 +9,14 @@ script:
   - docker run -e CI=true igloomane/react-test npm test
 
 after_success:
-  - docker build -t igloomane/multi-client ./client
+  - docker build -t igloomane/multi-client:v5 ./client
   - docker build -t igloomane/multi-nginx ./nginx
   - docker build -t igloomane/multi-server ./server
   - docker build -t igloomane/multi-worker ./worker
   # Log in to docker cli
   - echo "$DOCKER_PASS" | docker login -u "$DOCKER_ID" --password-stdin
   # Take images and push to docker hub
-  - docker push igloomane/multi-client
+  - docker push igloomane/multi-client:v5
   - docker push igloomane/multi-nginx
   - docker push igloomane/multi-server
   - docker push igloomane/multi-worker
